@@ -23,8 +23,8 @@ from anydlbot import(
         AUTH_USERS,
         HTTP_PROXY,
         DOWNLOAD_LOCATION,
-        DEF_THUMB_NAIL_VID_S
-        TG_MAX_FILE_SIZE,
+        DEF_THUMB_NAIL_VID_S,
+        TG_MAX_FILE_SIZE
 )
 
 # the Strings used for this "thing"
@@ -249,7 +249,8 @@ async def echo(bot, update):
                 chat_id=update.chat.id,
                 reply_to_message_id=update.message_id,
             )
-            description = "@BachehayeManoto FullHD"
+            description = "@BachehayeManoto HD"
+            custom_file_name = custom_file_name + ".mp4"
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
