@@ -39,7 +39,7 @@ async def save_photo(bot, update):
         )
         return
     # received single photo
-    download_location = DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
+    download_location = DOWNLOAD_LOCATION + "/thumb.jpg"
     await bot.download_media(
         message=update,
         file_name=download_location
