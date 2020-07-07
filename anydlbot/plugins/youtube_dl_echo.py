@@ -63,8 +63,10 @@ async def echo(bot, update):
         # youtube_dl extractors
         youtube_dl_url, custom_file_name, youtube_dl_format = url.split("|")
         if ") FullHD" in custom_file_name:
-            await update.edit_caption(
-                caption=Translation.DOWNLOAD_START
+            await bot.send_message(
+                text=Translation.DOWNLOAD_START,
+                chat_id=update.chat.id,
+                reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
@@ -101,7 +103,7 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.edit_caption(
+                await update.edit_text(
                     caption=error_message
                 )
 
@@ -118,7 +120,7 @@ async def echo(bot, update):
                     # https://stackoverflow.com/a/678242/4723940
                     file_size = os.stat(download_directory).st_size
                 if file_size > TG_MAX_FILE_SIZE:
-                    await update.edit_caption(
+                    await update.edit_text(
                         caption=Translation.RCHD_TG_API_LIMIT.format(
                             time_taken_for_download,
                             humanbytes(file_size)
@@ -135,7 +137,7 @@ async def echo(bot, update):
                         9
                     )
                     LOGGER.info(images)
-                    await update.edit_caption(
+                    await update.edit_text(
                         caption=Translation.UPLOAD_START
                     )
                     # get the correct width, height, and duration for videos greater than 10MB
@@ -239,8 +241,10 @@ async def echo(bot, update):
                         disable_web_page_preview=True
                     )
         if ") HD" in custom_file_name:
-            await update.edit_caption(
-                caption=Translation.DOWNLOAD_START
+            await bot.send_message(
+                text=Translation.DOWNLOAD_START,
+                chat_id=update.chat.id,
+                reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
@@ -277,7 +281,7 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.edit_caption(
+                await update.edit_text(
                     caption=error_message
                 )
 
@@ -294,7 +298,7 @@ async def echo(bot, update):
                     # https://stackoverflow.com/a/678242/4723940
                     file_size = os.stat(download_directory).st_size
                 if file_size > TG_MAX_FILE_SIZE:
-                    await update.edit_caption(
+                    await update.edit_text(
                         caption=Translation.RCHD_TG_API_LIMIT.format(
                             time_taken_for_download,
                             humanbytes(file_size)
@@ -311,7 +315,7 @@ async def echo(bot, update):
                         9
                     )
                     LOGGER.info(images)
-                    await update.edit_caption(
+                    await update.edit_text(
                         caption=Translation.UPLOAD_START
                     )
                     # get the correct width, height, and duration for videos greater than 10MB
