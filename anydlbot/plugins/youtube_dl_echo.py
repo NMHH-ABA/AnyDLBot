@@ -164,7 +164,7 @@ async def echo(bot, update):
                                 caption=description,
                                 parse_mode="HTML",
                                 # reply_markup=reply_markup,
-                                reply_to_message_id=update.reply_to_message.message_id,
+                                reply_to_message_id=update.reply_to_message.message_id+1,
                                 progress=progress_for_pyrogram,
                                 progress_args=(
                                     Translation.UPLOAD_START,
@@ -202,7 +202,7 @@ async def echo(bot, update):
                         await bot.send_media_group(
                             chat_id=update.chat.id,
                             disable_notification=True,
-                            reply_to_message_id=update.message_id,
+                            reply_to_message_id=update.message_id+1,
                             media=media_album_p
                         )
                     #
