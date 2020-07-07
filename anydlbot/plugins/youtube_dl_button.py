@@ -586,10 +586,6 @@ async def youtube_dl_call_back(bot, update):
                                 start_time
                             )
                         )
-                        await bot.send_photo(
-                            chat_id=update.message.chat.id,
-                            photo=thumb_image_path,
-                        )
                     else:
                         LOGGER.info("Did this happen? :\\")
                     end_two = datetime.now()
