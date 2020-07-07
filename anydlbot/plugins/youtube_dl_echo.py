@@ -126,7 +126,7 @@ async def echo(bot, update):
                     )
                     file_size = os.stat(current_file_name).st_size
 
-                    if file_size > Config.TG_MAX_FILE_SIZE:
+                    if file_size > TG_MAX_FILE_SIZE:
                         await bot.edit_message_text(
                             chat_id=update.chat.id,
                             text=Translation.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size)),
