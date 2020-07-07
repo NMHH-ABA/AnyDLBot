@@ -82,7 +82,7 @@ async def echo(bot, update):
                 "-c",
                 "--max-filesize", str(TG_MAX_FILE_SIZE),
                 "--embed-subs",
-                "-f", minus_f_format,
+                "-f", youtube_dl_format,
                 "--hls-prefer-ffmpeg", youtube_dl_url,
                 "-o", download_directory
             ]
