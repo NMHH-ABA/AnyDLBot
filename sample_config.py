@@ -16,7 +16,7 @@ class Config(object):
     TG_MAX_FILE_SIZE = 1572864000
     FREE_USER_MAX_FILE_SIZE = 50000000
     # default thumbnail to be used in the videos
-    DEF_THUMB_NAIL_VID_S = os.environ.get("DEF_THUMB_NAIL_VID_S", "https://via.placeholder.com/640x360?text=@BachehayeManoto")
+    DEF_THUMB_NAIL_VID_S = os.environ.get("DEF_THUMB_NAIL_VID_S", "")
     # proxy for accessing youtube-dl in GeoRestricted Areas
     # Get your own proxy from https://github.com/rg3/youtube-dl/issues/1091#issuecomment-230163061
     HTTP_PROXY = os.environ.get("HTTP_PROXY", None)
