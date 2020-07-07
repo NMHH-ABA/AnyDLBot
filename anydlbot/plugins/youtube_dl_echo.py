@@ -588,12 +588,12 @@ async def echo(bot, update):
                 update.message_id,
                 update.chat.id
             )
-            await update.reply_photo(
-                photo=thumb_image_path,
+            await update.reply_text(
+                text=Translation.FORMAT_SELECTION.format(thumbnail) + "\n" + Translation.SET_CUSTOM_USERNAME_PASSWORD,
                 quote=True,
-                caption=Translation.FORMAT_SELECTION.format(thumbnail) + "\n" + Translation.SET_CUSTOM_USERNAME_PASSWORD,
                 reply_markup=reply_markup,
-                parse_mode="html"
+                parse_mode="html",
+                disable_web_page_preview=True
             )
         else:
             # fallback for nonnumeric port a.k.a seedbox.io
@@ -613,11 +613,10 @@ async def echo(bot, update):
                 )
             ])
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
-            await update.reply_photo(
-                photo=DEF_THUMB_NAIL_VID_S,
+            await update.reply_text(
+                text=Translation.FORMAT_SELECTION.format(""),
                 quote=True,
-                caption=Translation.FORMAT_SELECTION.format(""),
                 reply_markup=reply_markup,
                 parse_mode="html",
-                reply_to_message_id=update.message_id
+                disable_web_page_preview=True
             )
