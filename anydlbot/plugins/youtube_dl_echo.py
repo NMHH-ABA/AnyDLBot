@@ -64,7 +64,8 @@ async def echo(bot, update):
     if url.count("|") == 2:
         shomar = random.randint(1, 10000)
         # youtube_dl extractors
-        youtube_dl_url, custom_file_name, youtube_dl_format = url.split("|")
+        youtube_dl_url, custom_file_name, youtube_dl_format = url.split(" | ")
+        tg_send_type = "file"
         if ") FullHD" in custom_file_name:
             await bot.send_message(
                 text=Translation.DOWNLOAD_START,
@@ -189,7 +190,6 @@ async def echo(bot, update):
                             thumb_image_path = None
                         start_time = time.time()
                         # try to upload file
-                        tg_send_type = "file"
                         if tg_send_type == "file":
                             await bot.send_document(
                                 chat_id=update.chat.id,
