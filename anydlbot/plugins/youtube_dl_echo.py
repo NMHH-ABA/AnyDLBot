@@ -71,7 +71,6 @@ async def echo(bot, update):
                 reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
-            custom_file_name = custom_file_name + ".mp4"
             current_file_name = custom_file_name
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
@@ -251,7 +250,6 @@ async def echo(bot, update):
                 reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto HD"
-            custom_file_name = custom_file_name + ".mp4"
             current_file_name = custom_file_name
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
