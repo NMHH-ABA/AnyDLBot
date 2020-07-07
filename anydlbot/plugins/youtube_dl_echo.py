@@ -179,7 +179,7 @@ async def echo(bot, update):
                         media_album_p = []
                         if images is not None:
                             i = 0
-                            caption = "© @AnyDLBot"
+                            #caption = "© @AnyDLBot"
                             if is_w_f:
                                 caption = "/upgrade to Plan D to remove the watermark\n© @AnyDLBot"
                             for image in images:
@@ -214,7 +214,158 @@ async def echo(bot, update):
                         text="Downloaded in {} seconds. \nUploaded in {} seconds.".format(time_taken_for_download,
                                                                                           time_taken_for_upload),
                         chat_id=update.chat.id,
-                        message_id=update.message_id,
+                        message_id=update.message_id+1,
+                        disable_web_page_preview=True
+                    )
+        if ") HD" in custom_file_name:
+            await bot.send_message(
+                text=Translation.DOWNLOAD_START,
+                chat_id=update.chat.id,
+                reply_to_message_id=update.message_id,
+            )
+            description = "@BachehayeManoto HD"
+            custom_file_name = custom_file_name + ".mp4"
+            tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
+            if not os.path.isdir(tmp_directory_for_each_user):
+                os.makedirs(tmp_directory_for_each_user)
+            download_directory = tmp_directory_for_each_user + "/" + custom_file_name
+            command_to_exec = [
+                "youtube-dl",
+                "-c",
+                "--max-filesize", str(TG_MAX_FILE_SIZE),
+                "--embed-subs",
+                "-f", youtube_dl_format,
+                "--hls-prefer-ffmpeg", youtube_dl_url,
+                "-o", download_directory
+            ]
+            command_to_exec.append("--no-warnings")
+            # command_to_exec.append("--quiet")
+            command_to_exec.append("--restrict-filenames")
+            LOGGER.info(command_to_exec)
+            start = datetime.now()
+            process = await asyncio.create_subprocess_exec(
+                *command_to_exec,
+                # stdout must a pipe to be accessible as process.stdout
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            # Wait for the subprocess to finish
+            stdout, stderr = await process.communicate()
+            e_response = stderr.decode().strip()
+            t_response = stdout.decode().strip()
+            LOGGER.info(e_response)
+            LOGGER.info(t_response)
+            ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
+            if e_response and ad_string_to_replace in e_response:
+                error_message = e_response.replace(ad_string_to_replace, "")
+                await bot.edit_message_text(
+                    chat_id=update.chat.id,
+                    message_id=update.message_id + 1,
+                    text=error_message
+                )
+                return False
+            if t_response:
+                # LOGGER.info(t_response)
+                end_one = datetime.now()
+                time_taken_for_download = (end_one - start).seconds
+                file_size = TG_MAX_FILE_SIZE + 1
+                download_directory_dirname = os.path.dirname(download_directory)
+                download_directory_contents = os.listdir(download_directory_dirname)
+                for download_directory_c in download_directory_contents:
+                    current_file_name = os.path.join(
+                        download_directory_dirname,
+                        download_directory_c
+                    )
+                    file_size = os.stat(current_file_name).st_size
+
+                    if file_size > TG_MAX_FILE_SIZE:
+                        await bot.edit_message_text(
+                            chat_id=update.chat.id,
+                            text=Translation.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size)),
+                            message_id=update.message_id + 1
+                        )
+                    else:
+                        is_w_f = False
+                        images = await generate_screen_shots(
+                            current_file_name,
+                            tmp_directory_for_each_user,
+                            is_w_f,
+                            "",
+                            300,
+                            9
+                        )
+                        LOGGER.info(images)
+                        await bot.edit_message_text(
+                            text=Translation.UPLOAD_START,
+                            chat_id=update.chat.id,
+                            message_id=update.message_id + 1
+                        )
+                        # get the correct width, height, and duration for videos greater than 10MB
+                        # ref: message from @BotSupport
+                        width = 0
+                        height = 0
+                        duration = 0
+                        start_time = time.time()
+                        # try to upload file
+                        if tg_send_type == "file":
+                            await bot.send_document(
+                                chat_id=update.chat.id,
+                                document=download_directory,
+                                #thumb=thumb_image_path,
+                                caption=description,
+                                parse_mode="HTML",
+                                # reply_markup=reply_markup,
+                                reply_to_message_id=update.message_id+1,
+                                progress=progress_for_pyrogram,
+                                progress_args=(
+                                    Translation.UPLOAD_START,
+                                    update,
+                                    start_time
+                                )
+                            )
+                        else:
+                            LOGGER.info("Did this happen? :\\")
+                        end_two = datetime.now()
+                        time_taken_for_upload = (end_two - end_one).seconds
+                        media_album_p = []
+                        if images is not None:
+                            i = 0
+                            #caption = "© @AnyDLBot"
+                            if is_w_f:
+                                caption = "/upgrade to Plan D to remove the watermark\n© @AnyDLBot"
+                            for image in images:
+                                if os.path.exists(image):
+                                    if i == 0:
+                                        media_album_p.append(
+                                            InputMediaPhoto(
+                                                media=image,
+                                                caption=caption,
+                                                parse_mode="html"
+                                            )
+                                        )
+                                    else:
+                                        media_album_p.append(
+                                            InputMediaPhoto(
+                                                media=image
+                                            )
+                                        )
+                                    i = i + 1
+                        await bot.send_media_group(
+                            chat_id=update.chat.id,
+                            disable_notification=True,
+                            reply_to_message_id=update.message_id+1,
+                            media=media_album_p
+                        )
+                    #
+                    try:
+                        shutil.rmtree(tmp_directory_for_each_user)
+                    except:
+                        pass
+                    await bot.edit_message_text(
+                        text="Downloaded in {} seconds. \nUploaded in {} seconds.".format(time_taken_for_download,
+                                                                                          time_taken_for_upload),
+                        chat_id=update.chat.id,
+                        message_id=update.message_id+1,
                         disable_web_page_preview=True
                     )
     else:
