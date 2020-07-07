@@ -63,7 +63,7 @@ async def echo(bot, update):
         # youtube_dl extractors
         youtube_dl_url, custom_file_name, youtube_dl_format = url.split("|")
         if ") FullHD" in custom_file_name:
-            await update.message.edit_caption(
+            await update.edit_caption(
                 caption=Translation.DOWNLOAD_START
             )
             description = "@BachehayeManoto FullHD"
@@ -101,7 +101,7 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.message.edit_caption(
+                await update.edit_caption(
                     caption=error_message
                 )
 
@@ -118,7 +118,7 @@ async def echo(bot, update):
                     # https://stackoverflow.com/a/678242/4723940
                     file_size = os.stat(download_directory).st_size
                 if file_size > TG_MAX_FILE_SIZE:
-                    await update.message.edit_caption(
+                    await update.edit_caption(
                         caption=Translation.RCHD_TG_API_LIMIT.format(
                             time_taken_for_download,
                             humanbytes(file_size)
@@ -135,7 +135,7 @@ async def echo(bot, update):
                         9
                     )
                     LOGGER.info(images)
-                    await update.message.edit_caption(
+                    await update.edit_caption(
                         caption=Translation.UPLOAD_START
                     )
                     # get the correct width, height, and duration for videos greater than 10MB
@@ -239,7 +239,7 @@ async def echo(bot, update):
                         disable_web_page_preview=True
                     )
         if ") HD" in custom_file_name:
-            await update.message.edit_caption(
+            await update.edit_caption(
                 caption=Translation.DOWNLOAD_START
             )
             description = "@BachehayeManoto FullHD"
@@ -277,7 +277,7 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.message.edit_caption(
+                await update.edit_caption(
                     caption=error_message
                 )
 
@@ -294,7 +294,7 @@ async def echo(bot, update):
                     # https://stackoverflow.com/a/678242/4723940
                     file_size = os.stat(download_directory).st_size
                 if file_size > TG_MAX_FILE_SIZE:
-                    await update.message.edit_caption(
+                    await update.edit_caption(
                         caption=Translation.RCHD_TG_API_LIMIT.format(
                             time_taken_for_download,
                             humanbytes(file_size)
@@ -311,7 +311,7 @@ async def echo(bot, update):
                         9
                     )
                     LOGGER.info(images)
-                    await update.message.edit_caption(
+                    await update.edit_caption(
                         caption=Translation.UPLOAD_START
                     )
                     # get the correct width, height, and duration for videos greater than 10MB
