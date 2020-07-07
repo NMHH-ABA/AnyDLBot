@@ -64,7 +64,7 @@ async def echo(bot, update):
     if url.count("|") == 2:
         shomar = random.randint(1, 10000)
         # youtube_dl extractors
-        youtube_dl_url, custom_file_name, youtube_dl_format = url.split(" | ")
+        youtube_dl_url, custom_file_name, youtube_dl_format = url.split("|")
         if ") FullHD" in custom_file_name:
             await bot.send_message(
                 text=Translation.DOWNLOAD_START,
@@ -72,7 +72,6 @@ async def echo(bot, update):
                 reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
-            custom_file_name = custom_file_name + ".mp4"
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(update.from_user.id)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
@@ -113,7 +112,7 @@ async def echo(bot, update):
 
                 return False
             if t_response:
-                # logger.info(t_response)
+                LOGGER.info(t_response)
                 end_one = datetime.now()
                 time_taken_for_download = (end_one - start).seconds
                 file_size = TG_MAX_FILE_SIZE + 1
