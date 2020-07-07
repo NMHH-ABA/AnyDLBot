@@ -106,7 +106,7 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.message.edit_text(
+                await update.edit_text(
                     text=error_message
                 )
                 return False
@@ -125,7 +125,7 @@ async def echo(bot, update):
                     file_size = os.stat(current_file_name).st_size
 
                     if file_size > TG_MAX_FILE_SIZE:
-                        await update.message.edit_text(
+                        await update.edit_text(
                             text=Translation.RCHD_TG_API_LIMIT.format(
                                 time_taken_for_download,
                                 humanbytes(file_size)
@@ -142,7 +142,7 @@ async def echo(bot, update):
                             9
                         )
                         LOGGER.info(images)
-                        await update.message.edit_text(
+                        await update.edit_text(
                             text=Translation.UPLOAD_START
                         )
                         # get the correct width, height, and duration for videos greater than 10MB
@@ -231,9 +231,9 @@ async def echo(bot, update):
                                         )
                                     i = i + 1
                         await bot.send_media_group(
-                            chat_id=update.message.chat.id,
+                            chat_id=update.chat.id,
                             disable_notification=True,
-                            reply_to_message_id=update.message.message_id,
+                            reply_to_message_id=update.message_id,
                             media=media_album_p
                         )
                     #
