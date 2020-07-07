@@ -32,6 +32,7 @@ from pyrogram import InputMediaPhoto
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 from anydlbot.helper_funcs.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
+from anydlbot.helper_funcs.help_uploadbot import DownLoadFile
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 # https://stackoverflow.com/a/37631799/4723940
@@ -424,15 +425,6 @@ async def youtube_dl_call_back(bot, update):
                     "--hls-prefer-ffmpeg", youtube_dl_url,
                     "-o", download_directory
                 ]
-        if HTTP_PROXY is not None:
-            command_to_exec.append("--proxy")
-            command_to_exec.append(HTTP_PROXY)
-        if youtube_dl_username is not None:
-            command_to_exec.append("--username")
-            command_to_exec.append(youtube_dl_username)
-        if youtube_dl_password is not None:
-            command_to_exec.append("--password")
-            command_to_exec.append(youtube_dl_password)
         command_to_exec.append("--no-warnings")
         # command_to_exec.append("--quiet")
         command_to_exec.append("--restrict-filenames")
@@ -458,7 +450,7 @@ async def youtube_dl_call_back(bot, update):
             )
             return False
         if t_response:
-            # LOGGER.info(t_response)
+            LOGGER.info(t_response)
             os.remove(save_ytdl_json_path)
             end_one = datetime.now()
             time_taken_for_download = (end_one -start).seconds
@@ -496,15 +488,15 @@ async def youtube_dl_call_back(bot, update):
                                 duration = metadata.get('duration').seconds
                     # get the correct width, height, and duration for videos greater than 10MB
                     if os.path.exists(thumb_image_path):
-                        width = 0
-                        height = 90
+                        #width = 0
+                        #height = 90
 
                         # resize image
                         # ref: https://t.me/PyrogramChat/44663
                         # https://stackoverflow.com/a/21669827/4723940
-                        Image.open(thumb_image_path).convert(
-                            "RGB").save(thumb_image_path)
-                        img = Image.open(thumb_image_path)
+                        #Image.open(thumb_image_path).convert(
+                            #"RGB").save(thumb_image_path)
+                        #img = Image.open(thumb_image_path)
                         # https://stackoverflow.com/a/37631799/4723940
                         # img.thumbnail((90, 90))
                         if tg_send_type == "file":
