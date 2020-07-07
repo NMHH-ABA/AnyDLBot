@@ -72,23 +72,23 @@ async def echo(bot, update):
                 reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
-            tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(update.from_user.id)
+            custom_file_name = custom_file_name + ".mp4"
+            tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
             download_directory = tmp_directory_for_each_user + "/" + custom_file_name
-            command_to_exec = []
-            # command_to_exec = ["youtube-dl", "-f", youtube_dl_format, "--hls-prefer-ffmpeg", "--recode-video", "mp4", "-k", youtube_dl_url, "-o", download_directory]
             command_to_exec = [
                 "youtube-dl",
                 "-c",
                 "--max-filesize", str(TG_MAX_FILE_SIZE),
                 "--embed-subs",
-                "-f", youtube_dl_format,
+                "-f", minus_f_format,
                 "--hls-prefer-ffmpeg", youtube_dl_url,
                 "-o", download_directory
             ]
             command_to_exec.append("--no-warnings")
             # command_to_exec.append("--quiet")
+            command_to_exec.append("--restrict-filenames")
             LOGGER.info(command_to_exec)
             start = datetime.now()
             process = await asyncio.create_subprocess_exec(
@@ -106,130 +106,136 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.edit_text(
-                    caption=error_message
+                await update.message.edit_text(
+                    text=error_message
                 )
-
                 return False
             if t_response:
-                LOGGER.info(t_response)
+                # LOGGER.info(t_response)
                 end_one = datetime.now()
                 time_taken_for_download = (end_one - start).seconds
                 file_size = TG_MAX_FILE_SIZE + 1
-                try:
-                    file_size = os.stat(download_directory).st_size
-                except FileNotFoundError as exc:
-                    download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-                    # https://stackoverflow.com/a/678242/4723940
-                    file_size = os.stat(download_directory).st_size
-                if file_size > TG_MAX_FILE_SIZE:
-                    await update.edit_text(
-                        caption=Translation.RCHD_TG_API_LIMIT.format(
-                            time_taken_for_download,
-                            humanbytes(file_size)
+                download_directory_dirname = os.path.dirname(download_directory)
+                download_directory_contents = os.listdir(download_directory_dirname)
+                for download_directory_c in download_directory_contents:
+                    current_file_name = os.path.join(
+                        download_directory_dirname,
+                        download_directory_c
+                    )
+                    file_size = os.stat(current_file_name).st_size
+
+                    if file_size > TG_MAX_FILE_SIZE:
+                        await update.message.edit_text(
+                            text=Translation.RCHD_TG_API_LIMIT.format(
+                                time_taken_for_download,
+                                humanbytes(file_size)
+                            )
                         )
-                    )
-                else:
-                    is_w_f = False
-                    images = await generate_screen_shots(
-                        custom_file_name,
-                        tmp_directory_for_each_user,
-                        is_w_f,
-                        "",
-                        300,
-                        9
-                    )
-                    LOGGER.info(images)
-                    await update.edit_text(
-                        caption=Translation.UPLOAD_START
-                    )
-                    # get the correct width, height, and duration for videos greater than 10MB
-                    width = 0
-                    height = 0
-                    duration = 0
-                    if tg_send_type != "file":
-                        metadata = extractMetadata(createParser(custom_file_name))
-                        if metadata is not None:
-                            if metadata.has("duration"):
-                                duration = metadata.get('duration').seconds
-                    # get the correct width, height, and duration for videos greater than 10MB
-                    if os.path.exists(thumb_image_path):
-                        width = 0
-                        height = 90
-
-                        # resize image
-                        # ref: https://t.me/PyrogramChat/44663
-                        # https://stackoverflow.com/a/21669827/4723940
-                        Image.open(thumb_image_path).convert(
-                            "RGB").save(thumb_image_path)
-                        img = Image.open(thumb_image_path)
-                        # https://stackoverflow.com/a/37631799/4723940
-                        # img.thumbnail((90, 90))
-                        if tg_send_type == "file":
-                            img.resize((320, height))
-                        else:
-                            img.resize((90, height))
-                        img.save(thumb_image_path, "JPEG")
-                        # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
-
-                        metadata = extractMetadata(createParser(thumb_image_path))
-                        if metadata.has("width"):
-                            width = metadata.get("width")
-                        if metadata.has("height"):
-                            height = metadata.get("height")
-                        if tg_send_type == "vm":
-                            height = width
                     else:
-                        thumb_image_path = None
-                    start_time = time.time()
-                    # try to upload file
-                    await bot.send_document(
-                        chat_id=update.chat.id,
-                        document=download_directory,
-                        # thumb=thumb_image_path,
-                        caption=description,
-                        parse_mode="HTML",
-                        # reply_markup=reply_markup,
-                        reply_to_message_id=update.message_id + 1,
-                        progress=progress_for_pyrogram,
-                        progress_args=(
-                            Translation.UPLOAD_START,
-                            update,
-                            start_time
+                        is_w_f = False
+                        images = await generate_screen_shots(
+                            current_file_name,
+                            tmp_directory_for_each_user,
+                            is_w_f,
+                            "",
+                            300,
+                            9
                         )
-                    )
-                    end_two = datetime.now()
-                    time_taken_for_upload = (end_two - end_one).seconds
-                    #
-                    media_album_p = []
-                    if images is not None:
-                        i = 0
-                        # caption = "© @AnyDLBot"
-                        if is_w_f:
-                            caption = "/upgrade to Plan D to remove the watermark\n© @AnyDLBot"
-                        for image in images:
-                            if os.path.exists(image):
-                                if i == 0:
-                                    media_album_p.append(
-                                        InputMediaPhoto(
-                                            media=image,
-                                            caption=caption,
-                                            parse_mode="html"
+                        LOGGER.info(images)
+                        await update.message.edit_text(
+                            text=Translation.UPLOAD_START
+                        )
+                        # get the correct width, height, and duration for videos greater than 10MB
+                        # ref: message from @BotSupport
+                        width = 0
+                        height = 0
+                        duration = 0
+                        if tg_send_type != "file":
+                            metadata = extractMetadata(createParser(current_file_name))
+                            if metadata is not None:
+                                if metadata.has("duration"):
+                                    duration = metadata.get('duration').seconds
+                        # get the correct width, height, and duration for videos greater than 10MB
+                        if os.path.exists(thumb_image_path):
+                            width = 0
+                            height = 90
+
+                            # resize image
+                            # ref: https://t.me/PyrogramChat/44663
+                            # https://stackoverflow.com/a/21669827/4723940
+                            Image.open(thumb_image_path).convert(
+                                "RGB").save(thumb_image_path)
+                            img = Image.open(thumb_image_path)
+                            # https://stackoverflow.com/a/37631799/4723940
+                            # img.thumbnail((90, 90))
+                            if tg_send_type == "file":
+                                img.resize((320, height))
+                            else:
+                                img.resize((90, height))
+                            img.save(thumb_image_path, "JPEG")
+                            # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
+
+                            metadata = extractMetadata(createParser(thumb_image_path))
+                            if metadata.has("width"):
+                                width = metadata.get("width")
+                            if metadata.has("height"):
+                                height = metadata.get("height")
+                            if tg_send_type == "vm":
+                                height = width
+                        else:
+                            thumb_image_path = None
+                        start_time = time.time()
+                        # try to upload file
+                        tg_send_type = "file"
+                        if tg_send_type == "file":
+                            await bot.send_document(
+                                chat_id=update.chat.id,
+                                document=download_directory,
+                                thumb=thumb_image_path,
+                                caption=description,
+                                parse_mode="HTML",
+                                # reply_markup=reply_markup,
+                                reply_to_message_id=update.reply_to_message.message_id,
+                                progress=progress_for_pyrogram,
+                                progress_args=(
+                                    Translation.UPLOAD_START,
+                                    update,
+                                    start_time
+                                )
+                            )
+                        else:
+                            LOGGER.info("Did this happen? :\\")
+                        end_two = datetime.now()
+                        time_taken_for_upload = (end_two - end_one).seconds
+                        media_album_p = []
+                        if images is not None:
+                            i = 0
+                            caption = "© @AnyDLBot"
+                            if is_w_f:
+                                caption = "/upgrade to Plan D to remove the watermark\n© @AnyDLBot"
+                            for image in images:
+                                if os.path.exists(image):
+                                    if i == 0:
+                                        media_album_p.append(
+                                            InputMediaPhoto(
+                                                media=image,
+                                                caption=caption,
+                                                parse_mode="html"
+                                            )
                                         )
-                                    )
-                                else:
-                                    media_album_p.append(
-                                        InputMediaPhoto(
-                                            media=image
+                                    else:
+                                        media_album_p.append(
+                                            InputMediaPhoto(
+                                                media=image
+                                            )
                                         )
-                                    )
-                                i = i + 1
-                    await bot.send_media_group(
-                        chat_id=update.chat.id,
-                        disable_notification=True,
-                        reply_to_message_id=update.message_id + 1,
-                        media=media_album_p
-                    )
+                                    i = i + 1
+                        await bot.send_media_group(
+                            chat_id=update.message.chat.id,
+                            disable_notification=True,
+                            reply_to_message_id=update.message.message_id,
+                            media=media_album_p
+                        )
                     #
                     try:
                         shutil.rmtree(tmp_directory_for_each_user)
@@ -237,10 +243,10 @@ async def echo(bot, update):
                     except:
                         pass
                     await bot.edit_message_text(
-                        text="Downloaded in {} seconds. \nUploaded in {} seconds.".format(time_taken_for_download,
-                                                                                          time_taken_for_upload),
+                        text=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download,
+                                                                                    time_taken_for_upload),
                         chat_id=update.chat.id,
-                        message_id=update.message_id + 1,
+                        message_id=update.message_id,
                         disable_web_page_preview=True
                     )
     else:
@@ -495,4 +501,4 @@ async def echo(bot, update):
                 reply_markup=reply_markup,
                 parse_mode="html",
                 reply_to_message_id=update.message_id
-            ) 
+            )
