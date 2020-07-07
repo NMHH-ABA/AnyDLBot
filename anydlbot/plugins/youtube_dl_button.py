@@ -451,7 +451,6 @@ async def youtube_dl_call_back(bot, update):
             return False
         if t_response:
             LOGGER.info(t_response)
-            os.remove(save_ytdl_json_path)
             end_one = datetime.now()
             time_taken_for_download = (end_one -start).seconds
             file_size = TG_MAX_FILE_SIZE + 1
@@ -594,6 +593,7 @@ async def youtube_dl_call_back(bot, update):
                 try:
                     shutil.rmtree(tmp_directory_for_each_user)
                     os.remove(thumb_image_path)
+                    os.remove(save_ytdl_json_path)
                 except:
                     pass
                 await bot.edit_message_text(
