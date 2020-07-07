@@ -11,6 +11,7 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 
 import asyncio
+import aiohttp
 import json
 import math
 import os
@@ -23,6 +24,7 @@ from anydlbot import(
         HTTP_PROXY,
         DOWNLOAD_LOCATION,
         DEF_THUMB_NAIL_VID_S
+        TG_MAX_FILE_SIZE,
 )
 
 # the Strings used for this "thing"
@@ -36,7 +38,7 @@ from pyrogram import(
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-from anydlbot.helper_funcs.display_progress import progress_for_pyrogram, humanbytes
+from anydlbot.helper_funcs.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
 from anydlbot.helper_funcs.help_uploadbot import DownLoadFile
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
@@ -69,6 +71,7 @@ async def echo(bot, update):
                 reply_to_message_id=update.message_id,
             )
             description = "@BachehayeManoto FullHD"
+            custom_file_name = custom_file_name + ".mp4"
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
