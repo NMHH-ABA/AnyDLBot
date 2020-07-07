@@ -164,7 +164,7 @@ async def echo(bot, update):
                                 caption=description,
                                 parse_mode="HTML",
                                 # reply_markup=reply_markup,
-                                reply_to_message_id=update.reply_to_message.message_id+1,
+                                reply_to_message_id=update.message_id+1,
                                 progress=progress_for_pyrogram,
                                 progress_args=(
                                     Translation.UPLOAD_START,
