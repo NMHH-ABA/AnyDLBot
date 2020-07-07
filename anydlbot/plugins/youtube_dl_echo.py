@@ -106,7 +106,9 @@ async def echo(bot, update):
             ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
             if e_response and ad_string_to_replace in e_response:
                 error_message = e_response.replace(ad_string_to_replace, "")
-                await update.edit_text(
+                await bot.edit_message_text(
+                    chat_id=update.chat.id,
+                    message_id=update.message_id + 1,
                     text=error_message
                 )
                 return False
@@ -124,12 +126,11 @@ async def echo(bot, update):
                     )
                     file_size = os.stat(current_file_name).st_size
 
-                    if file_size > TG_MAX_FILE_SIZE:
-                        await update.edit_text(
-                            text=Translation.RCHD_TG_API_LIMIT.format(
-                                time_taken_for_download,
-                                humanbytes(file_size)
-                            )
+                    if file_size > Config.TG_MAX_FILE_SIZE:
+                        await bot.edit_message_text(
+                            chat_id=update.chat.id,
+                            text=Translation.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size)),
+                            message_id=update.message_id + 1
                         )
                     else:
                         is_w_f = False
@@ -142,8 +143,10 @@ async def echo(bot, update):
                             9
                         )
                         LOGGER.info(images)
-                        await update.edit_text(
-                            text=Translation.UPLOAD_START
+                        await bot.edit_message_text(
+                            text=Translation.UPLOAD_START,
+                            chat_id=update.chat.id,
+                            message_id=update.message_id + 1
                         )
                         # get the correct width, height, and duration for videos greater than 10MB
                         # ref: message from @BotSupport
@@ -239,12 +242,11 @@ async def echo(bot, update):
                     #
                     try:
                         shutil.rmtree(tmp_directory_for_each_user)
-                        os.remove(thumb_image_path)
                     except:
                         pass
                     await bot.edit_message_text(
-                        text=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download,
-                                                                                    time_taken_for_upload),
+                        text="Downloaded in {} seconds. \nUploaded in {} seconds.".format(time_taken_for_download,
+                                                                                          time_taken_for_upload),
                         chat_id=update.chat.id,
                         message_id=update.message_id,
                         disable_web_page_preview=True
