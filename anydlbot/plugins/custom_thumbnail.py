@@ -12,6 +12,7 @@ LOGGER = logging.getLogger(__name__)
 
 import os
 from PIL import Image
+import Image
 import time
 
 from anydlbot import(
