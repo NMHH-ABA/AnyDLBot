@@ -34,7 +34,8 @@ from pyrogram import(
         Client,
         Filters,
         InlineKeyboardButton,
-        InlineKeyboardMarkup
+        InlineKeyboardMarkup,
+        InputMediaPhoto
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
