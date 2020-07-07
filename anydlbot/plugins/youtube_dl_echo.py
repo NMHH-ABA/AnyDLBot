@@ -72,6 +72,7 @@ async def echo(bot, update):
             )
             description = "@BachehayeManoto FullHD"
             custom_file_name = custom_file_name + ".mp4"
+            current_file_name = custom_file_name
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
@@ -251,6 +252,7 @@ async def echo(bot, update):
             )
             description = "@BachehayeManoto HD"
             custom_file_name = custom_file_name + ".mp4"
+            current_file_name = custom_file_name
             tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(shomar)
             if not os.path.isdir(tmp_directory_for_each_user):
                 os.makedirs(tmp_directory_for_each_user)
